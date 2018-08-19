@@ -17,7 +17,7 @@ package DDDPractice::Domain::User::User {
 
   has name => (
     is       => 'rw',
-    isa      => 'DDDPractice::Domain::Model::User::FullName',
+    isa      => 'DDDPractice::Domain::User::FullName',
     required => 1,
   );
 

@@ -33,7 +33,7 @@ package DDDPractice::App::User::UserService {
       first_name  => $first_name,
       family_name => $family_name,
     );
-    my $user = User->new(full_name => $full_name);
+    my $user = User->new(name => $full_name);
     if ( $self->registration_rule->is_duplicated($user) ) {
       left '同じIDのユーザーがいます';
     }

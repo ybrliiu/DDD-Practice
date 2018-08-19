@@ -16,15 +16,15 @@ package DDDPractice::App::User::FullNameModel {
     init_arg => undef,
   );
 
-  has full_name => (
+  has family_name => (
     is       => 'ro',
     isa      => 'Str',
     init_arg => undef,
   );
 
   sub BUILD($self, $args) {
-    $self->first_name( $self->{source}->first_name );
-    $self->full_name( $self->{source}->full_name );
+    $self->{first_name}  = $self->{source}->first_name;
+    $self->{family_name} = $self->{source}->family_name;
   }
 
   __PACKAGE__->meta->make_immutable;

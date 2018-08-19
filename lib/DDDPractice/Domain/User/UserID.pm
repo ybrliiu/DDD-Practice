@@ -7,7 +7,7 @@ package DDDPractice::Domain::User::UserID {
 
   has value => (
     is       => 'ro',
-    isa      => 'Int',
+    isa      => 'Str',
     required => 1,
   );
 

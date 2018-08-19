@@ -23,9 +23,9 @@ package DDDPractice::UI::Web::Controller::Root {
   sub user_list($self) {
     my @users = map {
       User->new(
-        id         => $_->id,
-        first_name => $_->first_name,
-        full_name  => $_->full_name,
+        id          => $_->id,
+        first_name  => $_->full_name_model->first_name,
+        family_name => $_->full_name_model->family_name,
       );
     } $self->user_service->get_user_list->@*;
     $self->render(users => \@users);
@@ -42,6 +42,12 @@ package DDDPractice::UI::Web::Controller::Root {
   }
 
   sub regist_user($self) {
+    my $first_name  = $self->param('first_name') // '';
+    my $family_name = $self->param('family_name') // '';
+    $self->user_service->regist_user($first_name, $family_name)->match(
+      Right => sub { $self->redirect_to('/user-list') },
+      Left  => sub { $self->redirect_to('/user-register') },
+    );
   }
 
 }

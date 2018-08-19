@@ -26,9 +26,9 @@ package DDDPractice::App::User::UserModel {
 
   sub BUILD($self, $args) {
     my $source = $self->{source};
-    $self->id( $source->id->value );
-    my $full_name_model = FullNameMode->new(source => $source->full_name);
-    $self->full_name_model($full_name_model);
+    $self->{id} = $source->id->value;
+    my $full_name_model = FullNameModel->new(source => $source->name);
+    $self->{full_name_model} = $full_name_model;
   }
 
   __PACKAGE__->meta->make_immutable;

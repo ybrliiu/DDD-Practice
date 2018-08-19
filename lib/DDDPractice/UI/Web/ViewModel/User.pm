@@ -6,19 +6,19 @@ package DDDPractice::UI::Web::ViewModel::User {
 
   has id => (
     is       => 'ro',
-    isa      => 'Int',
+    isa      => 'Str',
     required => 1,
   );
 
   has first_name => (
     is       => 'ro',
-    isa      => 'Int',
+    isa      => 'Str',
     required => 1,
   );
 
   has family_name => (
     is       => 'ro',
-    isa      => 'Int',
+    isa      => 'Str',
     required => 1,
   );
 
