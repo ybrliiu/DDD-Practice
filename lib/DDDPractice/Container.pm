@@ -7,20 +7,20 @@ package DDDPractice::Container {
 
   extends 'Bread::Board::Container';
 
-  sub instance($self) {
-    state $singleton = $self;
+  sub instance($class) {
+    state $singleton = $class->new;
   }
 
   sub BUILD($self, $args) {
 
-    container Infrastructure => as {
+    my $container = container Infrastructure => as {
 
       container User => as {
 
         service in_memory_user_repository => (
           block => sub ($s) {
-            require DDDPractice::Infrastructure::User::UserRepository;
-            DDDPractice::Infrastructure::User::UserRepository->new;
+            require DDDPractice::Infrastructure::InMemory::User::UserRepository;
+            DDDPractice::Infrastructure::InMemory::User::UserRepository->new;
           },
           lifecycle => 'Singleton',
         );
@@ -29,6 +29,7 @@ package DDDPractice::Container {
 
     };
 
+    $self->add_sub_container($container);
   }
 
   __PACKAGE__->meta->make_immutable;

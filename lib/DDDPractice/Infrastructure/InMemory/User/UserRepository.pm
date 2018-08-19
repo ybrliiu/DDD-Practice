@@ -1,4 +1,4 @@
-package DDDPractice::Infrastructure::User::UserRepository {
+package DDDPractice::Infrastructure::InMemory::User::UserRepository {
 
   use Mouse;
   use DDDPractice::Exporter;
