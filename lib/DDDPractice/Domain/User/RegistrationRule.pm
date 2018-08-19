@@ -2,10 +2,11 @@ package DDDPractice::Domain::User::RegistrationRule {
 
   use Mouse;
   use DDDPractice::Exporter;
+  use namespace::autoclean;
 
   has user_repository => (
     is       => 'ro',
-    isa      => 'DDDPractice::Domain::User::UserRepository',
+    does     => 'DDDPractice::Domain::User::UserRepository',
     required => 1,
   );
 

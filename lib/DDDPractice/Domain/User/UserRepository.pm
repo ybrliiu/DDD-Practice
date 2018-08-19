@@ -2,6 +2,7 @@ package DDDPractice::Domain::User::UserRepository {
 
   use Mouse::Role;
   use DDDPractice::Exporter;
+  use namespace::autoclean;
 
   requires 'find';
 
