@@ -1,0 +1,14 @@
+% layout 'default';
+% title 'ユーザー登録';
+<form action="<%= url_for '/regist-user' %>" method="post">
+  <label>
+    姓
+    <input type="text" name="family_name">
+  </label>
+  <label>
+    名
+    <input type="text" name="first_name">
+  </label>
+  <input type="submit" value="登録">
+</form>
+

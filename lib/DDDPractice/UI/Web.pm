@@ -12,7 +12,7 @@ package DDDPractice::UI::Web {
     $r->get( '/user-list'    )->to('root#user_list');
     $r->get( '/user-info'    )->to('root#user_info');
     $r->post('/remove-user'  )->to('root#remove_user');
-    $r->post('/user-register')->to('root#user_register');
+    $r->get( '/user-register')->to('root#user_register');
     $r->post('/regist-user'  )->to('root#remove_user');
 
   }

@@ -38,6 +38,7 @@ package DDDPractice::UI::Web::Controller::Root {
   }
 
   sub user_register($self) {
+    $self->render;
   }
 
   sub regist_user($self) {
