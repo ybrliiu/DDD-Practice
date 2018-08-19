@@ -1,4 +1,4 @@
-package DDDPractice::Domain::Model::User::FullName {
+package DDDPractice::Domain::User::FullName {
 
   use Mouse;
   use DDDPractice::Exporter;
