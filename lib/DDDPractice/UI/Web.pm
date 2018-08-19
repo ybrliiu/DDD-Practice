@@ -1,21 +1,22 @@
-package DDDPractice::UI::Web;
-use Mojo::Base 'Mojolicious';
+package DDDPractice::UI::Web {
 
-# This method will run once at server start
-sub startup {
-  my $self = shift;
+  use Mojo::Base 'Mojolicious';
+  use DDDPractice::Exporter;
 
-  # Load configuration from hash returned by "my_app.conf"
-  my $config = $self->plugin('Config');
+  sub startup($self) {
 
-  # Documentation browser under "/perldoc"
-  $self->plugin('PODRenderer') if $config->{perldoc};
+    $self->plugin('Config');
 
-  # Router
-  my $r = $self->routes;
+    my $r = $self->routes;
+    $r->get( '/'             )->to('root#root');
+    $r->get( '/user-list'    )->to('root#user_list');
+    $r->get( '/user-info'    )->to('root#user_info');
+    $r->post('/remove-user'  )->to('root#remove_user');
+    $r->post('/user-register')->to('root#user_register');
+    $r->post('/regist-user'  )->to('root#remove_user');
 
-  # Normal route to controller
-  $r->get('/')->to('example#welcome');
+  }
+
 }
 
 1;
