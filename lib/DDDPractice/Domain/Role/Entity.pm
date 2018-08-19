@@ -1,4 +1,4 @@
-package DDDPractice::Domain::Model::Role::Entity {
+package DDDPractice::Domain::Role::Entity {
 
   use Mouse::Role;
   use DDDPractice::Exporter;
@@ -25,11 +25,11 @@ __END__
 
 =head1 NAME
 
-DDDPractice::Domain::Model::Role::Entity - EntityのRole
+DDDPractice::Domain::Role::Entity - EntityのRole
 
 =head1 SYNOPSIS
   
-  with 'DDDPractice::Domain::Model::Role::Entity';
+  with 'DDDPractice::Domain::Role::Entity';
   ...
 
 =head1 DESCRIPTION

@@ -1,4 +1,4 @@
-package DDDPractice::Domain::Model::Role::ValueObject {
+package DDDPractice::Domain::Role::ValueObject {
 
   use Mouse::Role;
   use DDDPractice::Exporter;
@@ -25,11 +25,11 @@ __END__
 
 =head1 NAME
 
-DDDPractice::Domain::Model::Role::ValueObject - Value ObjectのRole
+DDDPractice::Domain::Role::ValueObject - Value ObjectのRole
 
 =head1 SYNOPSIS
   
-  with 'DDDPractice::Domain::Model::Role::ValueObject';
+  with 'DDDPractice::Domain::Role::ValueObject';
   ...
 
 =head1 DESCRIPTION
