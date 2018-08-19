@@ -2,7 +2,7 @@ package DDDPractice::App::User::UserService {
 
   use Mouse;
   use DDDPractice::Exporter;
-  use Scalish qw( right left );
+  use Scalish qw( left );
   use namespace::autoclean;
 
   use aliased 'DDDPractice::Domain::User::RegistrationRule';
@@ -39,7 +39,6 @@ package DDDPractice::App::User::UserService {
     }
     else {
       $self->user_repository->save($user);
-      right '登録成功';
     }
   }
 
@@ -54,7 +53,6 @@ package DDDPractice::App::User::UserService {
         );
         $target->full_name($new_name);
         $self->user_repository->save($target);
-        right '名前の変更に成功しました';
       },
       None => sub {
         left "id : $id のユーザーはいませんでした";
@@ -68,7 +66,6 @@ package DDDPractice::App::User::UserService {
     $maybe_target->match(
       Some => sub ($target) {
         $self->user_repository->remove($target);
-        right 'ユーザーの削除に成功しました';
       },
       None => sub {
         left "id : $id のユーザーはいませんでした";
@@ -79,15 +76,7 @@ package DDDPractice::App::User::UserService {
   sub get_user_info($self, $id) {
     my $target_id    = UserID->new(value => $id);
     my $maybe_target = $self->user_repository->find($target_id);
-    $maybe_target->match(
-      Some => sub ($target) {
-        my $target_model = UserModel->new(source => $target);
-        right $target_model;
-      },
-      None => sub {
-        left "id : $id のユーザーはいませんでした";
-      },
-    );
+    $maybe_target->flat_map(sub ($target) { UserModel->new(source => $target) } );
   }
 
   sub get_user_list($self) {
