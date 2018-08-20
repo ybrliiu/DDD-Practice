@@ -2,6 +2,7 @@ package DDDPractice::UI::Web::Controller::Root {
 
   use Mojo::Base 'Mojolicious::Controller';
   use DDDPractice::Exporter;
+  use Scalish qw( option for_yield );
   use namespace::autoclean;
 
   use aliased 'DDDPractice::Container';
@@ -35,6 +36,15 @@ package DDDPractice::UI::Web::Controller::Root {
   }
 
   sub remove_user($self) {
+    option( $self->param('id') )->match(
+      Some => sub ($id) {
+        $self->user_service->remove_user($id)->match(
+          Right => sub { $self->redirect_to('/user-list') },
+          Left  => sub { $self->redirect_to('/user-list') },
+        );
+      },
+      None => sub { $self->redirect_to('/user-list') },
+    );
   }
 
   sub user_register($self) {
@@ -42,11 +52,20 @@ package DDDPractice::UI::Web::Controller::Root {
   }
 
   sub regist_user($self) {
-    my $first_name  = $self->param('first_name') // '';
-    my $family_name = $self->param('family_name') // '';
-    $self->user_service->regist_user($first_name, $family_name)->match(
-      Right => sub { $self->redirect_to('/user-list') },
-      Left  => sub { $self->redirect_to('/user-register') },
+    my $option = for_yield(
+      [ map { option $self->param($_) } qw( first_name family_name ) ],
+      sub ($first_name, $family_name) {
+        $self->user_service->regist_user($first_name, $family_name);
+      }
+    );
+    $option->match(
+      Some => sub ($either) {
+        $either->match(
+          Right => sub { $self->redirect_to('/user-list') },
+          Left  => sub { $self->redirect_to('/user-register') },
+        );
+      },
+      None => sub { $self->redirect_to('/user-register') },
     );
   }
 
