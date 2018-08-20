@@ -18,17 +18,17 @@ package DDDPractice::App::User::UserModel {
     init_arg => undef,
   );
 
-  has full_name_model => (
+  has full_name => (
     is       => 'ro',
     isa      => FullNameModel,
     init_arg => undef,
   );
 
   sub BUILD($self, $args) {
-    my $source = $self->{source};
-    $self->{id} = $source->id->value;
-    my $full_name_model = FullNameModel->new(source => $source->name);
-    $self->{full_name_model} = $full_name_model;
+    my $source         = $self->{source};
+    $self->{id}        = $source->id->value;
+    my $full_name      = FullNameModel->new(source => $source->full_name);
+    $self->{full_name} = $full_name;
   }
 
   __PACKAGE__->meta->make_immutable;

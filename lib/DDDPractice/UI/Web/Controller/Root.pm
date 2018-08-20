@@ -24,8 +24,8 @@ package DDDPractice::UI::Web::Controller::Root {
     my @users = map {
       User->new(
         id          => $_->id,
-        first_name  => $_->full_name_model->first_name,
-        family_name => $_->full_name_model->family_name,
+        first_name  => $_->full_name->first_name,
+        family_name => $_->full_name->family_name,
       );
     } $self->user_service->get_user_list->@*;
     $self->render(users => \@users);

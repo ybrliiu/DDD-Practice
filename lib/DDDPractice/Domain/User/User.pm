@@ -15,7 +15,7 @@ package DDDPractice::Domain::User::User {
     builder => '_build_id',
   );
 
-  has name => (
+  has full_name => (
     is       => 'rw',
     isa      => 'DDDPractice::Domain::User::FullName',
     required => 1,

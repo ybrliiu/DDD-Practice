@@ -5,3 +5,13 @@
   <%= link_to 'click here' => url_for %> to reload the page or
   <%= link_to 'here' => '/index.html' %> to move forward to a static page.
 </p>
+<ul>
+  <li>
+    <a href="<%= url_for '/user-list' %>">ユーザー一覧</a>
+  </li>
+  <li>
+    <a href="<%= url_for '/user-register' %>">
+      ユーザー登録
+    </a>
+  </li>
+</ul>
