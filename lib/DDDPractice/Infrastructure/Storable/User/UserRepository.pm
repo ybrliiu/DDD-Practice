@@ -2,6 +2,7 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
 
   use Mouse;
   use DDDPractice::Exporter;
+  use Try::Tiny;
   use Scalish qw( option right left );
   use Storable qw( retrieve store );
   use namespace::autoclean;
@@ -17,7 +18,18 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
   );
 
   sub _build_memory($self) {
-    retrieve( FILE_NAME );
+    try {
+      retrieve( FILE_NAME );
+    } catch {
+      my $e = $_;
+      if ($e =~ /can't open (??{ FILE_NAME })/) {
+        store(+{}, FILE_NAME);
+        retrieve( FILE_NAME );
+      }
+      else {
+        die $e;
+      }
+    };
   }
 
   sub find($self, $user_id) {
@@ -30,8 +42,9 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
 
   sub save($self, $user) {
     $self->memory->{ $user->id->value } = $user;
-    store $self->memory, FILE_NAME;
-    right 'ユーザーデータの保存に成功';
+    store($self->memory, FILE_NAME)
+      ? right 'ユーザーデータの保存に成功'
+      : left "ユーザーデータの保存に失敗 : $!";
   }
 
   sub remove($self, $user) {

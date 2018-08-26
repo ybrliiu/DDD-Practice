@@ -25,6 +25,14 @@ package DDDPractice::Container {
           lifecycle => 'Singleton',
         );
 
+        service storable_user_repository => (
+          block => sub ($s) {
+            require DDDPractice::Infrastructure::Storable::User::UserRepository;
+            DDDPractice::Infrastructure::Storable::User::UserRepository->new;
+          },
+          lifecycle => 'Singleton',
+        );
+
       };
 
     };

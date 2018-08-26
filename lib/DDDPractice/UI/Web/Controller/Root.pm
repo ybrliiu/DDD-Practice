@@ -13,7 +13,7 @@ package DDDPractice::UI::Web::Controller::Root {
 
   has user_service => sub ($self) {
     my $user_repository =
-      $self->container->fetch('Infrastructure/User/in_memory_user_repository')->get;
+      $self->container->fetch('Infrastructure/User/storable_user_repository')->get;
     UserService->new(user_repository => $user_repository);
   };
 
