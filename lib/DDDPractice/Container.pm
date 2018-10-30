@@ -7,6 +7,12 @@ package DDDPractice::Container {
 
   extends 'Bread::Board::Container';
 
+  has name => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'ddd_practice',
+  );
+
   sub instance($class) {
     state $singleton = $class->new;
   }
