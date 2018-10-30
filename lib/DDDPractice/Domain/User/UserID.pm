@@ -2,6 +2,7 @@ package DDDPractice::Domain::User::UserID {
 
   use Mouse;
   use DDDPractice::Exporter;
+  use namespace::autoclean;
 
   with 'DDDPractice::Domain::Role::ValueObject';
 
