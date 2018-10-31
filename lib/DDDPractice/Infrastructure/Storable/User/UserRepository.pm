@@ -13,7 +13,7 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
 
   use constant FILE_NAME => './user.dat';
 
-  has is_locking => (
+  has _is_transactioning => (
     is       => 'rw',
     isa      => 'Bool',
     init_arg => undef,
@@ -49,18 +49,9 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
     };
   }
 
-  sub find($self, $user_id) {
-    my $memory = $self->_read;
-    option $memory->{ $user_id->value };
-  }
-
-  sub find_all($self) {
-    my $memory = $self->_read;
-    [ values $memory->%* ];
-  }
-
   sub begin($self) {
-    $self->is_locking(1);
+    return if $self->_is_transactioning;
+    $self->_is_transactioning(1);
     open my $fh, '+<', $self->FILE_NAME or die $!;
     flock $fh, LOCK_EX or die $!;
     $self->_maybe_fh($fh);
@@ -82,12 +73,22 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
     $self->_maybe_fh->close;
     $self->_maybe_memory(undef);
     $self->_maybe_fh(undef);
-    $self->is_locking(0);
+    $self->_is_transactioning(0);
+  }
+
+  sub find($self, $user_id) {
+    my $memory = $self->_read;
+    option $memory->{ $user_id->value };
+  }
+
+  sub find_all($self) {
+    my $memory = $self->_read;
+    [ values $memory->%* ];
   }
 
   sub save($self, $user) {
     my $is_success = do {
-      if ( $self->is_locking ) {
+      if ( $self->_is_transactioning ) {
         $self->_maybe_memory->{ $user->id->value } = $user;
       }
       else {
@@ -103,7 +104,7 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
 
   sub remove($self, $user) {
     my $is_success = do {
-      if ( $self->is_locking ) {
+      if ( $self->_is_transactioning ) {
         delete $self->_maybe_memory->{ $user->id->value }
       }
       else {
@@ -121,7 +122,7 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
   }
 
   sub DEMOLISH($self, @) {
-    $self->rollback if $self->is_locking;
+    $self->rollback if $self->_is_transactioning;
   }
 
   __PACKAGE__->meta->make_immutable;
