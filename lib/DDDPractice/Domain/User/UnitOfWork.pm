@@ -6,7 +6,7 @@ package DDDPractice::Domain::User::UnitOfWork {
 
   has user_repository => (
     is       => 'ro',
-    does     => 'DDDPractice::Domain::User::UserRepository',
+    isa      => 'DDDPractice::Domain::User::UserRepository',
     required => 1,
   );
 

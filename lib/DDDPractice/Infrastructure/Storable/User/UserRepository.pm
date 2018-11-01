@@ -7,7 +7,7 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
   use Try::Tiny;
   use Fcntl qw( :flock );
   use Scalish qw( option right left );
-  use Storable qw( retrieve nstore fd_retrieve );
+  use Storable qw( retrieve nstore nstore_fd fd_retrieve );
 
   with 'DDDPractice::Domain::User::UserRepository';
 

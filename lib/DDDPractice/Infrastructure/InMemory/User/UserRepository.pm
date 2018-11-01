@@ -64,12 +64,25 @@ package DDDPractice::Infrastructure::InMemory::User::UserRepository {
   }
 
   sub save($self, $user) {
-    $Memory->{ $user->id->value } = $user;
+    if ( $self->_is_transactioning ) {
+      $self->_be_operated_memory->{ $user->id->value } = $user;
+    }
+    else {
+      $Memory->{ $user->id->value } = $user;
+    }
     right 'ユーザーデータの保存に成功'
   }
 
   sub remove($self, $user) {
-    delete $Memory->{ $user->id->value }
+    my $is_success = do {
+      if ( $self->_is_transactioning ) {
+        delete $self->_be_operated_memory->{ $user->id->value };
+      }
+      else {
+        delete $Memory->{ $user->id->value };
+      }
+    };
+    $is_success
       ? right 'ユーザーデーターの削除に成功'
       : left 'ユーザーデーターの削除に失敗';
   }

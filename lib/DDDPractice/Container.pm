@@ -5,6 +5,11 @@ package DDDPractice::Container {
   use DDDPractice::Exporter;
   use namespace::autoclean;
 
+  use DDDPractice::Infrastructure::InMemory::User::UnitOfWork;
+  use DDDPractice::Infrastructure::InMemory::User::UserRepository;
+  use DDDPractice::Infrastructure::Storable::User::UnitOfWork;
+  use DDDPractice::Infrastructure::Storable::User::UserRepository;
+
   extends 'Bread::Board::Container';
 
   has name => (
@@ -23,20 +28,38 @@ package DDDPractice::Container {
 
       container User => as {
 
+        service in_memory_unit_of_work => (
+          block => sub ($s) {
+            DDDPractice::Infrastructure::InMemory::User::UnitOfWork->new(
+              user_repository => $s->param('user_repository'),
+            );
+          },
+          dependencies => +{
+            user_repository => 'in_memory_user_repository',
+          },
+        );
+
         service in_memory_user_repository => (
           block => sub ($s) {
-            require DDDPractice::Infrastructure::InMemory::User::UserRepository;
             DDDPractice::Infrastructure::InMemory::User::UserRepository->new;
           },
-          lifecycle => 'Singleton',
+        );
+
+        service storable_unit_of_work => (
+          block => sub ($s) {
+            DDDPractice::Infrastructure::Storable::User::UnitOfWork->new(
+              user_repository => $s->param('user_repository'),
+            );
+          },
+          dependencies => +{
+            user_repository => 'storable_user_repository',
+          },
         );
 
         service storable_user_repository => (
           block => sub ($s) {
-            require DDDPractice::Infrastructure::Storable::User::UserRepository;
             DDDPractice::Infrastructure::Storable::User::UserRepository->new;
           },
-          lifecycle => 'Singleton',
         );
 
       };

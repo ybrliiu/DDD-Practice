@@ -6,7 +6,7 @@ package DDDPractice::Domain::User::RegistrationRule {
 
   has user_repository => (
     is       => 'ro',
-    does     => 'DDDPractice::Domain::User::UserRepository',
+    # does     => 'DDDPractice::Domain::User::UserRepository',
     required => 1,
   );
 

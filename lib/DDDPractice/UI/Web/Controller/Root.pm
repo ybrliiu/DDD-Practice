@@ -12,9 +12,9 @@ package DDDPractice::UI::Web::Controller::Root {
   has container => sub ($self) { Container->instance };
 
   has user_service => sub ($self) {
-    my $user_repository =
-      $self->container->fetch('Infrastructure/User/storable_user_repository')->get;
-    UserService->new(user_repository => $user_repository);
+    my $unit_of_work =
+      $self->container->fetch('Infrastructure/User/storable_unit_of_work')->get;
+    UserService->new(unit_of_work => $unit_of_work);
   };
 
   sub root($self) {
