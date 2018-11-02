@@ -4,125 +4,63 @@ package DDDPractice::Infrastructure::Storable::User::UserRepository {
   use DDDPractice::Exporter;
   use namespace::autoclean;
 
-  use Try::Tiny;
-  use Fcntl qw( :flock );
-  use Scalish qw( option right left );
-  use Storable qw( retrieve nstore nstore_fd fd_retrieve );
+  use aliased 'DDDPractice::Domain::User::User';
+  use aliased 'DDDPractice::Domain::User::UserID';
+  use aliased 'DDDPractice::Domain::User::FullName';
+  use aliased 'DDDPractice::Infrastructure::Storable::UserData';
+  use aliased 'DDDPractice::Infrastructure::Storable::UserDataStore';
 
   with 'DDDPractice::Domain::User::UserRepository';
 
-  use constant FILE_NAME => './user.dat';
-
-  has _is_transactioning => (
-    is       => 'rw',
-    isa      => 'Bool',
+  has store => (
+    is       => 'ro',
+    isa      => UserDataStore,
     init_arg => undef,
-    default  => 0,
+    builder  => '_build_store',
   );
 
-  has _maybe_memory => (
-    is       => 'rw',
-    isa      => 'Maybe[HashRef[DDDPractice::Domain::User::User]]',
-    init_arg => undef,
-    default  => undef,
-  );
-
-  has _maybe_fh => (
-    is       => 'rw',
-    isa      => 'Maybe[FileHandle]',
-    init_arg => undef,
-    default  => undef,
-  );
-
-  sub _read($self) {
-    try {
-      retrieve $self->FILE_NAME;
-    } catch {
-      my $e = $_;
-      if ($e =~ /can't open (??{ $self->FILE_NAME })/) {
-        nstore(+{}, $self->FILE_NAME);
-        retrieve $self->FILE_NAME;
-      }
-      else {
-        die $e;
-      }
-    };
+  sub _build_store($self) {
+    UserDataStore->new;
   }
 
   sub begin($self) {
-    return if $self->_is_transactioning;
-    $self->_is_transactioning(1);
-    open my $fh, '+<', $self->FILE_NAME or die $!;
-    flock $fh, LOCK_EX or die $!;
-    $self->_maybe_fh($fh);
-    $self->_maybe_memory(fd_retrieve $fh);
+    $self->store->begin;
   }
 
   sub commit($self) {
-    truncate $self->_maybe_fh, 0 or die $!;
-    seek $self->_maybe_fh, 0, 0 or die $!;
-    nstore_fd( $self->_maybe_memory, $self->_maybe_fh );
-    $self->_unlock;
+    $self->store->commit;
   }
 
   sub rollback($self) {
-    $self->_unlock;
+    $self->store->rollback;
   }
 
-  sub _unlock($self) {
-    $self->_maybe_fh->close;
-    $self->_maybe_memory(undef);
-    $self->_maybe_fh(undef);
-    $self->_is_transactioning(0);
+  sub _user_data_to_user($class, $user_data) {
+    User->new(
+      id        => UserID->new( value => $user_data->id ),
+      full_name => FullName->new(
+        first_name  => $user_data->first_name,
+        family_name => $user_data->family_name,
+      ),
+    );
   }
 
   sub find($self, $user_id) {
-    my $memory = $self->_read;
-    option $memory->{ $user_id->value };
+    $self->store->get( $user_id->value )->map(sub ($user_data) {
+      $self->_user_data_to_user($user_data);
+    });
   }
 
   sub find_all($self) {
-    my $memory = $self->_read;
-    [ values $memory->%* ];
+    [ map { $self->_user_data_to_user($_) } $self->store->get_all->@* ];
   }
 
   sub save($self, $user) {
-    my $is_success = do {
-      if ( $self->_is_transactioning ) {
-        $self->_maybe_memory->{ $user->id->value } = $user;
-      }
-      else {
-        my $memory = $self->_read;
-        $memory->{ $user->id->value } = $user;
-        nstore $memory, $self->FILE_NAME;
-      }
-    };
-    $is_success
-      ? right 'ユーザーデータの保存に成功'
-      : left "ユーザーデータの保存に失敗 : $!";
+    $self->store->set( UserData->new_from_user_model($user) );
   }
 
   sub remove($self, $user) {
-    my $is_success = do {
-      if ( $self->_is_transactioning ) {
-        delete $self->_maybe_memory->{ $user->id->value }
-      }
-      else {
-        my $memory = $self->_read;
-        my $is_delete_success = delete $memory->{ $user->id->value };
-        if ( $is_delete_success ) {
-          nstore($memory, $self->FILE_NAME) or die $!;
-        }
-        $is_delete_success;
-      }
-    };
-    $is_success
-      ? right 'ユーザーデーターの削除に成功'
-      : left "ユーザーデータの保存に失敗 : $!";
-  }
-
-  sub DEMOLISH($self, @) {
-    $self->rollback if $self->_is_transactioning;
+    $self->store->delete( $user->id->value );
   }
 
   __PACKAGE__->meta->make_immutable;

@@ -89,7 +89,7 @@ package DDDPractice::App::User::UserService {
   sub get_user_info($self, $id) {
     my $target_id    = UserID->new(value => $id);
     my $maybe_target = $self->user_repository->find($target_id);
-    $maybe_target->flat_map(sub ($target) { UserModel->new(source => $target) } );
+    $maybe_target->map(sub ($target) { UserModel->new(source => $target) } );
   }
 
   sub get_user_list($self) {
