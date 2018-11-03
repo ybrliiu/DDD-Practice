@@ -22,11 +22,12 @@ package DDDPractice::Infrastructure::Storable::CircleData {
     required => 1,
   );
 
-  sub new_from_user_model($class, $user) {
+  sub new_from_circle_model($class, $circle) {
+    my @members_ids = map { $_->user_id->value } $circle->members->@*;
     $class->new(
-      id          => $user->id->value,
-      first_name  => $user->full_name->first_name,
-      family_name => $user->full_name->family_name,
+      id          => $circle->id->value,
+      name        => $circle->name->value,
+      members_ids => \@members_ids,
     );
   }
 
