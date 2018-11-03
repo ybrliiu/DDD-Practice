@@ -1,4 +1,4 @@
-package DDDPractice::Infrastructure::Storable::UserData {
+package DDDPractice::Infrastructure::Storable::CircleData {
 
   use Mouse;
   use DDDPractice::Exporter;
@@ -10,15 +10,15 @@ package DDDPractice::Infrastructure::Storable::UserData {
     required => 1,
   );
 
-  has first_name => (
-    is       => 'rw',
+  has name => (
+    is       => 'ro',
     isa      => 'Str',
     required => 1,
   );
 
-  has family_name => (
-    is       => 'rw',
-    isa      => 'Str',
+  has members_ids => (
+    is       => 'ro',
+    isa      => 'ArrayRef[Str]',
     required => 1,
   );
 
