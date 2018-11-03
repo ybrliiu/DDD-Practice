@@ -1,4 +1,4 @@
-package DDDPractice::Domain::User::CircleID {
+package DDDPractice::Domain::Circle::CircleID {
 
   use Mouse;
   use DDDPractice::Exporter;
@@ -6,7 +6,7 @@ package DDDPractice::Domain::User::CircleID {
 
   use Data::GUID;
 
-  with 'Rinne::Domain::Role::Entity';
+  with 'DDDPractice::Domain::Role::Entity';
 
   has value => (
     is      => 'ro',
